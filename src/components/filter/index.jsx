@@ -1,15 +1,17 @@
+import styles from "./index.module.css";
+
 export const Filter = (props) => {
   const setFilter = (event) => {
     props.updateState(event.target.value);
   };
 
   return (
-    <select onChange={setFilter}>
+    <select className={styles.filter} onChange={setFilter}>
       <option value="all" defaultValue>
-        Все
+        All
       </option>
-      <option value="done">Выполненные</option>
-      <option value="current">Текущие</option>
+      <option value="done">Done</option>
+      <option value="current">Current</option>
     </select>
   );
 };

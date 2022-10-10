@@ -1,34 +1,55 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
 import cx from "classnames";
-
-import { toggleTodo, deleteTodo } from "../../store/actions/creators/todo";
+import {
+  useUpdateTodoMutation,
+  useDeleteTodoMutation,
+} from "../../services/todo";
 
 import styles from "./index.module.css";
 
 export const Todo = ({ todo }) => {
-  const dispatch = useDispatch();
+  const [updateTodo, { isLoadingUpdate }] = useUpdateTodoMutation();
+  const [deleteTodo, { isLoadingDelete }] = useDeleteTodoMutation();
+
+  const { id, title, completed } = todo;
 
   const toggleTodoItem = () => {
-    dispatch(toggleTodo(todo.id));
+    updateTodo({ id, completed: !completed });
   };
 
   const deleteTodoItem = (element) => {
     element.stopPropagation();
-    dispatch(deleteTodo(todo.id));
+    deleteTodo({ id });
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isLoadingUpdate || isLoadingDelete) {
+      return setIsLoading(true);
+    } else {
+      return setIsLoading(false);
+    }
+  }, [isLoadingUpdate, isLoadingDelete]);
+
   return (
-    <li className={styles.item} onClick={toggleTodoItem}>
-      {todo.completed ? "👌" : "👋"}{" "}
+    <li
+      className={cx(styles.item, {
+        [styles.loading]: isLoading,
+      })}
+      onClick={toggleTodoItem}
+    >
+      {completed ? "👌" : "👋"}{" "}
       <span
         className={cx({
-          [styles.completed]: todo.completed,
+          [styles.completed]: completed,
         })}
       >
-        {todo.content}
+        {title}
       </span>
-      <button onClick={deleteTodoItem}>X</button>
+      <button className={styles.deleteButton} onClick={deleteTodoItem}>
+        ❌
+      </button>
     </li>
   );
 };
