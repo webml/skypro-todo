@@ -1,31 +1,48 @@
-import { useSelector } from "react-redux";
-import { todosSelector } from "../../store/selectors/todo";
 import { Todo } from "../todo";
+import { useGetAllTodosQuery } from "../../services/todo";
 
 import styles from "./index.module.css";
 
 export const TodoList = (props) => {
-  const todos = useSelector(todosSelector);
+  const { data, error, isLoading } = useGetAllTodosQuery();
 
-  let filterTodoList = (todo) => {
+  const isEmptyList = !isLoading && !data?.length;
+
+  if (isLoading) {
+    return <p>Loading…</p>;
+  }
+
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
+  if (isEmptyList) {
+    return <p>No todos, yay!</p>;
+  }
+
+  const filterTodoList = (todo) => {
     switch (props.filter) {
       case "all":
         return true;
 
       case "done":
-        return todo.completed === true ? true : false;
+        return todo.completed;
 
       case "current":
-        return todo.completed === false ? true : false;
+        return !todo.completed;
 
       default:
-        console.log("Ошибка при проверке на выполнение");
+        throw new Error(
+          `todo.completed содержит неизвестное значение.
+          \ntodo.id: ${todo.id}
+          \ntodo.completed: ${todo.completed}`
+        );
     }
   };
 
   return (
     <ul className={styles.list}>
-      {todos.map(
+      {data.map(
         (todo) => filterTodoList(todo) && <Todo key={todo.id} todo={todo} />
       )}
     </ul>

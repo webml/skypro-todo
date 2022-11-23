@@ -1,0 +1,25 @@
+.filter {
+  margin-top: 4px;
+  width: 286px;
+  border-radius: 8px;
+  padding: 8px;
+  transition: 0.25s;
+  border: 4px solid rgba(0, 0, 0, 1);
+}
+
+.filter::-ms-expand {
+  display: none;
+}
+
+.filter:hover {
+  transform: scale(1.025);
+}
+
+.filter:focus {
+  border: 4px solid #ff9f1c;
+  color: #011627;
+  outline: none;
+}
+.filter option {
+  width: 240px;
+}
